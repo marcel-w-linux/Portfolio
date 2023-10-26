@@ -1,0 +1,22 @@
+version: "3"
+services:
+    app-g:
+        build:
+            context: .
+            dockerfile: app.Dockerfile
+        networks:
+            - "app-network"
+    nginx-g:
+        image: nginx
+        volumes:
+            - ./nginx.conf:/etc/nginx/nginx.conf:ro
+        ports:
+            - 80:80
+            - 9001:9001
+        depends_on:
+            - app-g
+        networks:
+            - "app-network"
+
+networks:
+    app-network:
