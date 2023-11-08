@@ -9,7 +9,7 @@ To view the results of the dockerized application, follow these steps:
   * localhost:9001 (to be redirected to subpage with the text about health
   
 The repository includes the following files:
-- 'main.go' + 'go.mod': code for a simple Go app that serves multiple HTTP endpoints
+- 'main.go' + 'go.mod': code for a simple Go app that serves multiple HTTP endpoints (not mine)
 - 'nginx.conf': configuration of Nginx
 - 'app.Dockerfile': dockerfile to build the image for the app (from scratch)
 - 'docker-compose.yml': file to build the images and run the containers in Docker (using docker-compose)
