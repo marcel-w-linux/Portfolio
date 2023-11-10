@@ -14,4 +14,6 @@ Usage of the script:
 Example:
 ./script.sh -f log.tar.bz2 -u "Windows" -m
 
-In the repository is an example compressed tar archive (`log.tar.bz2`), that contains directory with log from web server.
+The repository includes the following files:
+- 'script.sh': the script
+- `log.tar.bz2`: an example of a compressed tar archive that contains a directory with log from a web server
