@@ -19,7 +19,10 @@ get_row_number () {
 	fi
 }
 
-
+# funkcja do wprowadzanie tłumaczeń 
+# $1 - słowo/słowa z języka A
+# $2 - słowo/słowa z języka B
+# [$3] - suma do tej pory prawidłowo wprowadzonych tłumaczeń ($CORRECT) 
 correct_translation() {
 	local WRONG="false" # flaga do sprawdzania czy słówko/słówka zostały przetłumaczone (w pełni) prawidłowo
 	if [ $# -eq 3 ]; then
@@ -145,5 +148,5 @@ if [ $# -gt 0 ]; then
 		exit 2
 	fi
 else
-	pol_translation $ROW_NUMBER
+	pol_translation
 fi
