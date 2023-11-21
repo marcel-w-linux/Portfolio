@@ -60,8 +60,9 @@ correct_translation() {
 	fi
 }
 
-# funkcja do tłumaczenia na polski 
-pol_translation () {
+# funkcja do tłumaczenia
+# [$1] - jeżeli brak parametrów tłumacz: ang-pol, jeżeli podany parametr '-e' tłumacz: pol-ang
+translation () {
 	RAND_ARRAY=($(shuf -i 1-$ROW_NUMBER)) # uzyskanie tablicy z losową kolejnością liczb od 1 do ROW_NUMBER (liczba wierszy w słowniku)
 	ALL_WORDS=0 # suma wszystkich możliwych tłumaczeń
 	CORRECT=0 # suma prawidłowo wprowadzonych tłumaczeń
@@ -69,9 +70,15 @@ pol_translation () {
 	WRONG_WORDS_POL=() # tablica błędnych tłumaczeń (słówek polskich)
 
 	for ((i=0; i<${#RAND_ARRAY[@]}; i++)); do
-		ENG_WORD=$(sed -n "${RAND_ARRAY[$i]}p" $SLOWNIK | awk -F "-" '{if($1=="hands") print $1"-"$2; else print $1}') # angielskie słowo/słowa do przetłumacznia
-		POL_WORD=$(sed -n "${RAND_ARRAY[$i]}p" $SLOWNIK | awk -F "-" '{if($1=="hands") print $3; else print $2}') # polskie słowo/słowa do weryfikacji poprawności wprowadzenia (przetłumaczenia)
-
+		if [ "$1" == "-e" ]; then
+			POL_WORD=$(sed -n "${RAND_ARRAY[$i]}p" $SLOWNIK | awk -F "-" '{if($1=="hands") print $1"-"$2; else print $1}') # angielskie słowo/słowa do przetłumacznia
+			ENG_WORD=$(sed -n "${RAND_ARRAY[$i]}p" $SLOWNIK | awk -F "-" '{if($1=="hands") print $3; else print $2}') # polskie słowo/słowa do weryfikacji poprawności wprowadzenia (przetłumaczenia)
+			ENG_WORD=$(echo "$ENG_WORD" | awk '{$1=$1}1') # aby usunąć znak tabulacji z polskich słów
+		else
+			ENG_WORD=$(sed -n "${RAND_ARRAY[$i]}p" $SLOWNIK | awk -F "-" '{if($1=="hands") print $1"-"$2; else print $1}') # angielskie słowo/słowa do przetłumacznia
+			POL_WORD=$(sed -n "${RAND_ARRAY[$i]}p" $SLOWNIK | awk -F "-" '{if($1=="hands") print $3; else print $2}') # polskie słowo/słowa do weryfikacji poprawności wprowadzenia (przetłumaczenia)
+		fi
+		
 		(( ALL_WORDS+=$(echo "$POL_WORD" | wc -w) ))
 
 		# jeżeli źle przetłumaczono, wprowadź słówka do tablic:
@@ -80,8 +87,10 @@ pol_translation () {
 		WRONG_WORDS_POL+=("$POL_WORD")
 	done
 	
+	echo -e "===================================================================="
 	printf "Poprawność = "
-	echo "scale=2 ; 100 * $CORRECT / $ALL_WORDS"|bc # statystyka poprawności
+	echo -e "scale=2 ; 100 * $CORRECT / $ALL_WORDS"|bc # statystyka poprawności
+	echo -e "====================================================================\n\n"
 	
 	# dla źle przetłumaczonych słów wykonaj ponowne tłumaczenie:
 	while [ ${#WRONG_WORDS_ENG[@]} -gt 0 ]; do
@@ -97,43 +106,6 @@ pol_translation () {
 	done
 }
 
-# funkcja do tłumaczenia na angielski 
-eng_translation () {
-	RAND_ARRAY=($(shuf -i 1-$ROW_NUMBER)) # uzyskanie tablicy z losową kolejnością liczb od 1 do ROW_NUMBER (liczba wierszy w słowniku)
-	ALL_WORDS=0 # suma wszystkich możliwych tłumaczeń
-	CORRECT=0 # suma prawidłowo wprowadzonych tłumaczeń
-	WRONG_WORDS_ENG=() # tablica błędnych tłumaczeń (słówek angielskich)
-	WRONG_WORDS_POL=() # tablica błędnych tłumaczeń (słówek polskich)
-
-	for ((i=0; i<${#RAND_ARRAY[@]}; i++)); do
-		ENG_WORD=$(sed -n "${RAND_ARRAY[$i]}p" $SLOWNIK | awk -F "-" '{if($1=="hands") print $1"-"$2; else print $1}') # angielskie słowo/słowa do przetłumacznia
-		POL_WORD=$(sed -n "${RAND_ARRAY[$i]}p" $SLOWNIK | awk -F "-" '{if($1=="hands") print $3; else print $2}') # polskie słowo/słowa do weryfikacji poprawności wprowadzenia (przetłumaczenia)
-		POL_WORD=$(echo "$POL_WORD" | awk '{$1=$1}1') # aby usunąć znak tabulacji
-
-		(( ALL_WORDS+=$(echo "$ENG_WORD" | wc -w) ))
-
-		# jeżeli źle przetłumaczono, wprowadź słówka do tablic:
-		correct_translation "$POL_WORD" "$ENG_WORD" CORRECT || \
-		WRONG_WORDS_ENG+=("$ENG_WORD") \
-		WRONG_WORDS_POL+=("$POL_WORD")
-	done
-	
-	printf "Poprawność = "
-	echo "scale=2 ; 100 * $CORRECT / $ALL_WORDS"|bc # statystyka poprawności
-	
-	# dla źle przetłumaczonych słów wykonaj ponowne tłumaczenie:
-	while [ ${#WRONG_WORDS_POL[@]} -gt 0 ]; do
-		TMP_WRONG_WORDS_ENG=("${WRONG_WORDS_ENG[@]}")
-		TMP_WRONG_WORDS_POL=("${WRONG_WORDS_POL[@]}")
-		unset WRONG_WORDS_ENG
-		unset WRONG_WORDS_POL
-		for ((i=0; i<${#TMP_WRONG_WORDS_POL[@]}; i++)); do
-			correct_translation "${TMP_WRONG_WORDS_POL[$i]}" "${TMP_WRONG_WORDS_ENG[$i]}" || \
-			WRONG_WORDS_ENG+=("${TMP_WRONG_WORDS_ENG[$i]}") \
-			WRONG_WORDS_POL+=("${TMP_WRONG_WORDS_POL[$i]}")
-		done
-	done
-}
 
 
 # ----------------- main() ------------------------------------
@@ -141,12 +113,12 @@ get_row_number "dictionary.txt" # nazwa pilku z słownikiem
 
 if [ $# -gt 0 ]; then
 	if [ $1 == "-e" ]; then
-		eng_translation
+		translation -e
 	else
 		echo "Zła opcja!"
 		usage
 		exit 2
 	fi
 else
-	pol_translation
+	translation
 fi
