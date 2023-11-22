@@ -1,4 +1,4 @@
-The script 'words.sh' is used to memorize challenging words from a foreign language (in this case, from English, as the dictionary specifies). The script provides a word/words in one language and expects them to be translated in another. The words are retrieved from the dictionary file: 'dictionary.txt'. It then provides information about whether correct translations were entered, for example:
+The script 'words.sh' is used to memorize challenging words from a foreign language (in this case, from English, as the dictionary specifies). The script provides a word/words in one language and expects them to be translated in another. The words are randomly retrieved from the dictionary file: 'dictionary.txt'. It then provides information about whether correct translations were entered, for example:
 	diversity	 - różnorodność
 
 		OK
@@ -28,7 +28,13 @@ The script 'words.sh' is used to memorize challenging words from a foreign langu
 	additional, extra	 - ...
 
 After translating all the words from the dictionary, accuracy statistics are provided. For all previously mistranslated words, the script is rerun until all translations are entered correctly.
-
+Thanks to the randomness, we avoid associating the meanings of words that appear in a fixed order, for example, when we have the following entries in the dictionary:
+...
+evaluate	-	oceniać
+manner	-	sposób
+facility	-	funkcja, zdolność
+...
+we can associate that after the word 'oceniać' there is the word 'sposób' but we may not remember that the word 'manner' means 'sposób'.
 
 The script also takes one additional option:
 '-e': to translate to the opposite language (in this case, from Polish to English).
