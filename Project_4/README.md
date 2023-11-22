@@ -29,11 +29,11 @@ The script 'words.sh' is used to memorize challenging words from a foreign langu
 
 After translating all the words from the dictionary, accuracy statistics are provided. For all previously mistranslated words, the script is rerun until all translations are entered correctly.
 Thanks to the randomness, we avoid associating the meanings of words that appear in a fixed order, for example, when we have the following entries in the dictionary:
-...
-evaluate	-	oceniać
-manner	-	sposób
-facility	-	funkcja, zdolność
-...
+	...
+	evaluate	-	oceniać
+	manner	-	sposób
+	facility	-	funkcja, zdolność
+	...
 we can associate that after the word 'oceniać' there is the word 'sposób' but we may not remember that the word 'manner' means 'sposób'.
 
 The script also takes one additional option:
