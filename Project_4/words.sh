@@ -32,7 +32,7 @@ correct_translation() {
 	read -p "$1 - " TRANSLATED # przetłumaczone słowo/słowa
 	echo
 	for j in $TRANSLATED; do
-		if [[ $2 =~ $j ]]; then
+		if [[ "$2" =~ "$j" ]]; then
 			echo "    OK"
 			if [ $# -eq 3 ]; then
 				(( CORRECT_L++ ))
@@ -71,12 +71,12 @@ translation () {
 
 	for ((i=0; i<${#RAND_ARRAY[@]}; i++)); do
 		if [ "$1" == "-e" ]; then
-			POL_WORD=$(sed -n "${RAND_ARRAY[$i]}p" $SLOWNIK | awk -F "-" '{if($1=="hands") print $1"-"$2; else print $1}') # angielskie słowo/słowa do przetłumacznia
-			ENG_WORD=$(sed -n "${RAND_ARRAY[$i]}p" $SLOWNIK | awk -F "-" '{if($1=="hands") print $3; else print $2}') # polskie słowo/słowa do weryfikacji poprawności wprowadzenia (przetłumaczenia)
+			POL_WORD=$(sed -n "${RAND_ARRAY[$i]}p" "$SLOWNIK" | awk -F "-" '{if($1=="hands") print $1"-"$2; else print $1}') # angielskie słowo/słowa do przetłumacznia
+			ENG_WORD=$(sed -n "${RAND_ARRAY[$i]}p" "$SLOWNIK" | awk -F "-" '{if($1=="hands") print $3; else print $2}') # polskie słowo/słowa do weryfikacji poprawności wprowadzenia (przetłumaczenia)
 			ENG_WORD=$(echo "$ENG_WORD" | awk '{$1=$1}1') # aby usunąć znak tabulacji z polskich słów
 		else
-			ENG_WORD=$(sed -n "${RAND_ARRAY[$i]}p" $SLOWNIK | awk -F "-" '{if($1=="hands") print $1"-"$2; else print $1}') # angielskie słowo/słowa do przetłumacznia
-			POL_WORD=$(sed -n "${RAND_ARRAY[$i]}p" $SLOWNIK | awk -F "-" '{if($1=="hands") print $3; else print $2}') # polskie słowo/słowa do weryfikacji poprawności wprowadzenia (przetłumaczenia)
+			ENG_WORD=$(sed -n "${RAND_ARRAY[$i]}p" "$SLOWNIK" | awk -F "-" '{if($1=="hands") print $1"-"$2; else print $1}') # angielskie słowo/słowa do przetłumacznia
+			POL_WORD=$(sed -n "${RAND_ARRAY[$i]}p" "$SLOWNIK" | awk -F "-" '{if($1=="hands") print $3; else print $2}') # polskie słowo/słowa do weryfikacji poprawności wprowadzenia (przetłumaczenia)
 		fi
 		
 		(( ALL_WORDS+=$(echo "$POL_WORD" | wc -w) ))
