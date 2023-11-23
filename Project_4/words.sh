@@ -89,7 +89,7 @@ translation () {
 	
 	echo -e "===================================================================="
 	printf "Poprawność = "
-	echo -e "scale=2 ; 100 * $CORRECT / $ALL_WORDS"|bc # statystyka poprawności
+	echo "$(echo "scale=2 ; 100 * $CORRECT / $ALL_WORDS"|bc) %" # statystyka poprawności
 	echo -e "====================================================================\n\n"
 	
 	# dla źle przetłumaczonych słów wykonaj ponowne tłumaczenie:
