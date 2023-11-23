@@ -38,6 +38,7 @@ we can associate that after the word 'oceniać' there is the word 'sposób' but 
 
 The script also takes one additional option:
 '-e': to translate to the opposite language (in this case, from Polish to English).
+To use the script, the file `dictionary.txt` has to be in the same directory.
 
 Usage of the script:
 ./words.sh [-e]
